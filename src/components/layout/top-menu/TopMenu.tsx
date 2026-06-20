@@ -1,8 +1,14 @@
+'use client'
 import {topMenu} from "@/components/layout/top-menu/top-menu.data";
 import Link from "next/link";
 import cn from "clsx";
-import LanguageSwitcher from "@/components/layout/top-menu/language-switcher/LanguageSwitcher";
 import {Dot} from "lucide-react";
+import dynamic from "next/dynamic";
+
+const LanguageSwitcher = dynamic(() => import('./language-switcher/LanguageSwitcher').then((mod) => mod.LanguageSwitcher), {
+    ssr: false
+})
+
 
 export const TopMenu = () => {
     return (

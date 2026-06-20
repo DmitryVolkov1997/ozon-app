@@ -4,8 +4,11 @@ import {LayoutGrid, Search} from "lucide-react";
 import {headerMenu} from "@/components/layout/header/header-menu.data";
 import Link from "next/link";
 import cn from 'clsx'
+import {useTranslations} from "next-intl";
 
 export const Header = () => {
+    const t = useTranslations('header')
+
     return (
         <header>
             <div className='grid grid-cols-[auto_auto_1fr_auto] gap-x-6 items-center p-3'>
@@ -14,7 +17,7 @@ export const Header = () => {
                 <button className='bg-primary text-white rounded-md p-2 flex items-center gap-2 hover:bg-primary/90'>
                     <LayoutGrid/>
 
-                    <span>Каталог</span>
+                    <span>{t('catalogTitle')}</span>
                 </button>
 
                 <div
