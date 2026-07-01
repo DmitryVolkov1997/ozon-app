@@ -1,21 +1,26 @@
-'use client'
+"use client";
 import {useMemo, useState} from "react";
 import {LANGUAGES} from "@/components/layout/top-menu/language-switcher/languages.data";
+import {usePathname, useRouter} from "@/i18n/navigation";
 import cookies from "js-cookie";
-
 
 export const LanguageSwitcher = () => {
     const [currentLanguage, setCurrentLanguage] = useState<'ru' | 'en'>(cookies.get('locale') === 'en' ? 'en' : 'ru')
+    const router = useRouter();
+    const pathname = usePathname();
 
     const toggleHandler = () => {
-        const newLanguage = currentLanguage === 'ru' ? 'en' : 'ru'
-        setCurrentLanguage(newLanguage)
+        const newLanguage = currentLanguage === "ru" ? "en" : "ru";
+
+        setCurrentLanguage(newLanguage);
         cookies.set('locale', newLanguage)
-    }
+        router.replace(pathname, {locale: newLanguage})
+        router.refresh()
+    };
 
     const language = useMemo(() => {
-        return LANGUAGES.find((language) => language.code === currentLanguage)
-    }, [currentLanguage])
+        return LANGUAGES.find((language) => language.code === currentLanguage);
+    }, [currentLanguage]);
 
     return (
         <button
@@ -26,4 +31,3 @@ export const LanguageSwitcher = () => {
         </button>
     );
 };
-

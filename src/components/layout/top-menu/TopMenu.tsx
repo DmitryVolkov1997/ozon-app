@@ -1,52 +1,50 @@
-'use client'
-import {topMenu} from "@/components/layout/top-menu/top-menu.data";
+"use client";
+import { topMenu } from "@/components/layout/top-menu/top-menu.data";
 import Link from "next/link";
 import cn from "clsx";
-import {Dot} from "lucide-react";
+import { Dot } from "lucide-react";
 import dynamic from "next/dynamic";
 
-const LanguageSwitcher = dynamic(() => import('./language-switcher/LanguageSwitcher').then((mod) => mod.LanguageSwitcher), {
-    ssr: false
-})
-
+const LanguageSwitcher = dynamic(
+	() => import("./language-switcher/LanguageSwitcher").then((mod) => mod.LanguageSwitcher),
+	{
+		ssr: false,
+	},
+);
 
 export const TopMenu = () => {
-    return (
-        <div className='mt-5 flex flex-wrap items-center justify-between gap-x-5'>
-            <nav className='flex gap-5'>
-                {topMenu.map((menuItem, index) => (
-                    <Link
-                        className={cn('flex gap-2 items-center opacity-70 hover:opacity-100 transition-opacity', {
-                            'opacity-100 text-teal-600': index === 0
-                        })}
-                        key={menuItem.id}
-                        href={menuItem.href}>
-                        {menuItem.icon && (
-                            <menuItem.icon size={16}/>
-                        )}
+	return (
+		<div className="mt-5 flex flex-wrap items-center justify-between gap-x-5">
+			<nav className="flex gap-5">
+				{topMenu.map((menuItem, index) => (
+					<Link
+						className={cn(
+							"flex gap-2 items-center opacity-70 hover:opacity-100 transition-opacity",
+							{
+								"opacity-100 text-teal-600": index === 0,
+							},
+						)}
+						key={menuItem.id}
+						href={menuItem.href}
+					>
+						{menuItem.icon && <menuItem.icon size={16} />}
 
-                        <span className="whitespace-nowrap">
-                        {menuItem.title}
-                    </span>
-                    </Link>
-                ))}
-            </nav>
+						<span className="whitespace-nowrap">{menuItem.title}</span>
+					</Link>
+				))}
+			</nav>
 
-            <div className='flex items-center gap-x-3'>
-                <div className='font-medium flex items-center whitespace-nowrap'>
-                    <span
-                        className='opacity-60 hover:opacity-100 transition-opacity'>Караганда</span>
-                    <Dot/>
-                    <button className='text-primary font-semibold'>Укажите адрес</button>
-                </div>
+			<div className="flex items-center gap-x-3">
+				<div className="font-medium flex items-center whitespace-nowrap">
+					<span className="opacity-60 hover:opacity-100 transition-opacity">Караганда</span>
+					<Dot />
+					<button className="text-primary font-semibold">Укажите адрес</button>
+				</div>
 
-                <div>
-                    <LanguageSwitcher/>
-                </div>
-            </div>
-
-        </div>
-
-    );
+				<div>
+					<LanguageSwitcher />
+				</div>
+			</div>
+		</div>
+	);
 };
-
