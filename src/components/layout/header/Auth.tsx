@@ -19,6 +19,12 @@ export const Auth = ({ ref, setIsOpen }: AuthProps) => {
 	const [error, setError] = useState<string | null>(null);
 
 	const handleSignUp = async () => {
+		console.log({
+			email,
+			password,
+			name,
+		});
+
 		const { error } = await signUp.email({ email, password, name });
 
 		if (error?.message) {
