@@ -1,5 +1,5 @@
 import { signIn } from "@/lib/auth-client";
-import { Dispatch, RefObject, SetStateAction, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, SyntheticEvent, useState } from "react";
 import { AuthForm } from "./AuthForm";
 
 interface AuthLoginProps {
@@ -8,14 +8,24 @@ interface AuthLoginProps {
 	ref: RefObject<HTMLFormElement | null>;
 	setIsOpen: Dispatch<SetStateAction<boolean>>;
 	setAuthMode: Dispatch<SetStateAction<"login" | "register">>;
+	isOpen: boolean;
 }
 
-export const AuthLogin = ({ isPending, authMode, ref, setIsOpen, setAuthMode }: AuthLoginProps) => {
+export const AuthLogin = ({
+	isPending,
+	authMode,
+	ref,
+	setIsOpen,
+	setAuthMode,
+	isOpen,
+}: AuthLoginProps) => {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
 
-	const handleSignIn = async () => {
+	const handleSignIn = async (e: SyntheticEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
 		const { error } = await signIn.email({ email, password });
 
 		if (error?.message) {
@@ -37,6 +47,7 @@ export const AuthLogin = ({ isPending, authMode, ref, setIsOpen, setAuthMode }: 
 			title="Войти"
 			authMode={authMode}
 			setAuthMode={setAuthMode}
+			isOpen={isOpen}
 		/>
 	);
 };

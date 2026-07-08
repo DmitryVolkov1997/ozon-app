@@ -1,5 +1,5 @@
 import { signUp } from "@/lib/auth-client";
-import { RefObject, Dispatch, SetStateAction, useState } from "react";
+import { RefObject, Dispatch, SetStateAction, useState, SyntheticEvent } from "react";
 import { AuthForm } from "./AuthForm";
 
 interface AuthRegisterProps {
@@ -8,6 +8,7 @@ interface AuthRegisterProps {
 	ref: RefObject<HTMLFormElement | null>;
 	setIsOpen: Dispatch<SetStateAction<boolean>>;
 	setAuthMode: Dispatch<SetStateAction<"login" | "register">>;
+	isOpen: boolean;
 }
 
 export const AuthRegister = ({
@@ -16,13 +17,16 @@ export const AuthRegister = ({
 	ref,
 	setIsOpen,
 	setAuthMode,
+	isOpen,
 }: AuthRegisterProps) => {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
 	const [error, setError] = useState<string | null>(null);
 	const [name, setName] = useState<string>("");
 
-	const handleSignUp = async () => {
+	const handleSignUp = async (e: SyntheticEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
 		const { error } = await signUp.email({ email, password, name });
 
 		if (error?.message) {
@@ -46,6 +50,7 @@ export const AuthRegister = ({
 			name={name}
 			setName={setName}
 			setAuthMode={setAuthMode}
+			isOpen={isOpen}
 		/>
 	);
 };

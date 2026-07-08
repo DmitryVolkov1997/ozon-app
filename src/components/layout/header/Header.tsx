@@ -31,6 +31,12 @@ export const Header = () => {
 		}
 	}, [isOpen]);
 
+	useEffect(() => {
+		if (data?.user) {
+			setIsOpen(false);
+		}
+	}, [data, setIsOpen]);
+
 	return (
 		<>
 			<header>
@@ -58,7 +64,7 @@ export const Header = () => {
 
 					<div className="inline-flex items-center gap-x-8">
 						{data?.user ? (
-							<div className="relative">
+							<div className="relative" ref={profileMenuRef}>
 								<button
 									className="flex items-center flex-col"
 									onClick={() => setIsOpenProfileMenu(!isOpenProfileMenu)}
@@ -68,7 +74,7 @@ export const Header = () => {
 									<span className="font-medium">{data.user.name || data.user.email}</span>
 								</button>
 
-								{isOpenProfileMenu && <ProfileMenu ref={profileMenuRef} />}
+								{isOpenProfileMenu && <ProfileMenu setIsOpenProfileMenu={setIsOpenProfileMenu} />}
 							</div>
 						) : (
 							<button className="inline-flex flex-col items-center" onClick={() => setIsOpen(true)}>
@@ -100,6 +106,7 @@ export const Header = () => {
 					ref={ref}
 					setIsOpen={setIsOpen}
 					setAuthMode={setAuthMode}
+					isOpen={isOpen}
 				/>
 			)}
 
@@ -110,6 +117,7 @@ export const Header = () => {
 					ref={ref}
 					setIsOpen={setIsOpen}
 					setAuthMode={setAuthMode}
+					isOpen={isOpen}
 				/>
 			)}
 

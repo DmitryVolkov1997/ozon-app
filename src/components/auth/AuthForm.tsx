@@ -1,8 +1,9 @@
-import { Dispatch, RefObject, SetStateAction } from "react";
+import { Dispatch, RefObject, SetStateAction, SyntheticEvent } from "react";
 import { Button } from "../ui/Button";
 import { InputField } from "../ui/InputField";
 import { Modal } from "../ui/Modal";
 import { SkeletonLoader } from "../ui/SceletonLoader";
+import { useEscapeClose } from "@/hooks/useEscapeClose";
 
 interface AuthFormProps {
 	email: string;
@@ -10,7 +11,7 @@ interface AuthFormProps {
 	password: string;
 	setPassword: Dispatch<SetStateAction<string>>;
 	ref: RefObject<HTMLFormElement | null>;
-	onConfirm: () => void;
+	onConfirm: (e: SyntheticEvent<HTMLFormElement>) => void;
 	setIsOpen: Dispatch<SetStateAction<boolean>>;
 	error: string | null;
 	isPending: boolean;
@@ -19,6 +20,7 @@ interface AuthFormProps {
 	name?: string;
 	setName?: Dispatch<SetStateAction<string>>;
 	setAuthMode: Dispatch<SetStateAction<"login" | "register">>;
+	isOpen: boolean;
 }
 
 export const AuthForm = ({
@@ -36,9 +38,16 @@ export const AuthForm = ({
 	name,
 	setName,
 	setAuthMode,
+	isOpen,
 }: AuthFormProps) => {
+	const handleClose = () => {
+		setIsOpen(false);
+	};
+
+	useEscapeClose(handleClose, isOpen);
+
 	return (
-		<Modal ref={ref} onClose={() => setIsOpen(false)}>
+		<Modal ref={ref} onClose={handleClose} onSubmit={onConfirm}>
 			{isPending ? (
 				<SkeletonLoader className="rounded-xl w-full mb-4" count={3} />
 			) : (
@@ -70,12 +79,7 @@ export const AuthForm = ({
 								onChange={(e) => setName?.(e.target.value)}
 							/>
 
-							<Button
-								className="w-full py-1.5 mb-3"
-								isDisabled={isPending}
-								onClick={onConfirm}
-								type="button"
-							>
+							<Button className="w-full py-1.5 mb-3" isDisabled={isPending} type="button">
 								{isPending ? "Загрузка..." : "Зарегестрироваться"}
 							</Button>
 
@@ -94,12 +98,7 @@ export const AuthForm = ({
 
 					{authMode === "login" && (
 						<>
-							<Button
-								className="w-full py-1.5 mb-3"
-								isDisabled={isPending}
-								onClick={onConfirm}
-								type="button"
-							>
+							<Button className="w-full py-1.5 mb-3" isDisabled={isPending} type="submit">
 								{isPending ? "Загрузка..." : "Войти"}
 							</Button>
 
