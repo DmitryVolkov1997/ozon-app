@@ -6,12 +6,22 @@ import Link from "next/link";
 import cn from "clsx";
 import { useTranslations } from "next-intl";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
-import { Auth } from "./Auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
+import { ProfileMenu } from "./ProfileMenu";
+import { AuthLogin } from "@/components/auth/AuthLogin";
+import { AuthRegister } from "@/components/auth/AuthRegister";
 
 export const Header = () => {
 	const t = useTranslations("header");
 	const { isOpen, setIsOpen, ref } = useOutsideClick<HTMLFormElement>(false);
+	const { data, isPending } = useSession();
+	const {
+		isOpen: isOpenProfileMenu,
+		ref: profileMenuRef,
+		setIsOpen: setIsOpenProfileMenu,
+	} = useOutsideClick<HTMLDivElement>(false);
+	const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
 	useEffect(() => {
 		if (isOpen) {
@@ -47,10 +57,26 @@ export const Header = () => {
 					</div>
 
 					<div className="inline-flex items-center gap-x-8">
-						<button className="inline-flex flex-col items-center" onClick={() => setIsOpen(true)}>
-							<User size={21} />
-							<span className="font-medium">Войти</span>
-						</button>
+						{data?.user ? (
+							<div className="relative">
+								<button
+									className="flex items-center flex-col"
+									onClick={() => setIsOpenProfileMenu(!isOpenProfileMenu)}
+								>
+									<User size={21} />
+
+									<span className="font-medium">{data.user.name || data.user.email}</span>
+								</button>
+
+								{isOpenProfileMenu && <ProfileMenu ref={profileMenuRef} />}
+							</div>
+						) : (
+							<button className="inline-flex flex-col items-center" onClick={() => setIsOpen(true)}>
+								<User size={21} />
+								<span className="font-medium">Войти</span>
+							</button>
+						)}
+
 						{headerMenu.map((el) => (
 							<Link
 								className={cn(
@@ -67,7 +93,27 @@ export const Header = () => {
 				</div>
 			</header>
 
-			{isOpen && <Auth ref={ref} setIsOpen={setIsOpen} />}
+			{isOpen && authMode === "login" && (
+				<AuthLogin
+					isPending={isPending}
+					authMode="login"
+					ref={ref}
+					setIsOpen={setIsOpen}
+					setAuthMode={setAuthMode}
+				/>
+			)}
+
+			{isOpen && authMode === "register" && (
+				<AuthRegister
+					isPending={isPending}
+					authMode="register"
+					ref={ref}
+					setIsOpen={setIsOpen}
+					setAuthMode={setAuthMode}
+				/>
+			)}
+
+			{/*{isOpen && <Auth ref={ref} setIsOpen={setIsOpen} />}*/}
 		</>
 	);
 };

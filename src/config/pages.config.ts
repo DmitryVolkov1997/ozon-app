@@ -3,6 +3,7 @@ export class PagesConfig {
 	ORDERS = "/orders";
 	FAVORITES = "/favorites";
 	CART = "/cart";
+	PROFILE = "/profile";
 
 	PRODUCT_DETAILS(slug: string) {
 		return `/product/${slug}`;
