@@ -1,4 +1,4 @@
-import { Heart, Package, ShoppingBasket, User } from "lucide-react";
+import { Heart, Package, ShoppingBasket, User, UserRoundPen } from "lucide-react";
 import { PAGES } from "@/config/pages.config";
 
 export const headerMenu = [
@@ -19,5 +19,11 @@ export const headerMenu = [
 		title: "Корзина",
 		link: PAGES.CART,
 		icon: ShoppingBasket,
+	},
+	{
+		id: 4,
+		title: "Админка",
+		link: PAGES.ADMIN,
+		icon: UserRoundPen,
 	},
 ] as const;
