@@ -3,12 +3,14 @@ import { AuthLogin } from "@/components/auth/AuthLogin";
 import { AuthRegister } from "@/components/auth/AuthRegister";
 import { headerMenu } from "@/components/layout/header/header-menu.data";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { Link, usePathname } from "@/i18n/navigation";
 import { useSession } from "@/lib/auth-client";
+import { favoritesProductIdAtom } from "@/store";
 import cn from "clsx";
+import { useAtom } from "jotai";
 import { LayoutGrid, Search, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ProfileMenu } from "./ProfileMenu";
 
@@ -22,6 +24,8 @@ export const Header = () => {
     setIsOpen: setIsOpenProfileMenu,
   } = useOutsideClick<HTMLDivElement>(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const pathname = usePathname();
+  const [favorites] = useAtom(favoritesProductIdAtom);
 
   useEffect(() => {
     if (isOpen) {
@@ -75,7 +79,13 @@ export const Header = () => {
             {data?.user ? (
               <div className="relative" ref={profileMenuRef}>
                 <button
-                  className="flex items-center flex-col"
+                  className={cn(
+                    "flex items-center flex-col font-medium opacity-70 hover:opacity-100 transition-opacity",
+                    {
+                      "font-medium text-foreground opacity-100":
+                        pathname === "/",
+                    },
+                  )}
                   onClick={() => setIsOpenProfileMenu(!isOpenProfileMenu)}
                 >
                   <User size={21} />
@@ -91,26 +101,45 @@ export const Header = () => {
               </div>
             ) : (
               <button
-                className="inline-flex flex-col items-center"
+                className={cn(
+                  "flex items-center flex-col font-medium opacity-70 hover:opacity-100 transition-opacity",
+                  {
+                    "font-medium text-foreground opacity-100": pathname === "/",
+                  },
+                )}
                 onClick={() => setIsOpen(true)}
               >
                 <User size={21} />
-                <span className="font-medium">Войти</span>
+                <span>Войти</span>
               </button>
             )}
 
-            {headerMenu.map((el) => (
-              <Link
-                className={cn(
-                  "inline-flex flex-col items-center opacity-70 hover:opacity-100 transition-opacity",
-                )}
-                key={el.id}
-                href={el.link}
-              >
-                <el.icon size={21} />
-                <span className="font-medium">{el.title}</span>
-              </Link>
-            ))}
+            {headerMenu.map((el) => {
+              const isActive =
+                pathname === el.link || pathname.startsWith(`${el.link}/`);
+
+              return (
+                <Link
+                  className={cn(
+                    "inline-flex flex-col items-center opacity-70 hover:opacity-100 transition-opacity relative",
+                    {
+                      "font-medium text-foreground opacity-100": isActive,
+                    },
+                  )}
+                  key={el.id}
+                  href={el.link}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <el.icon size={21} />
+                  <span className="font-medium">{el.title}</span>
+                  {favorites.length > 0 && el.title === "Избранное" && (
+                    <span className="absolute right-1 -top-2 inline-flex h-6 min-w-6 items-center justify-center whitespace-nowrap rounded-full bg-pink-800 px-1.5 text-xs leading-none text-white">
+                      {favorites.length}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </header>
@@ -136,8 +165,6 @@ export const Header = () => {
           isOpen={isOpen}
         />
       )}
-
-      {/*{isOpen && <Auth ref={ref} setIsOpen={setIsOpen} />}*/}
     </>
   );
 };

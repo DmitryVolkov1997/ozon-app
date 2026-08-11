@@ -1,4 +1,4 @@
-import { deleteProduct, getAllProducts } from "@/lib/actions/admin";
+import { deleteProduct, getAllProducts } from "@/lib/actions/product";
 import { addCurrency } from "@/utils/add-currency";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";

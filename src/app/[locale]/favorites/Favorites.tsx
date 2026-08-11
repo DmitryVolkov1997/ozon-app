@@ -5,9 +5,8 @@ import { getProductByIds } from "@/lib/actions/product";
 import { favoritesProductIdAtom } from "@/store";
 import { useQuery } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
-import { FC } from "react";
 
-const Favorites: FC = () => {
+export default function Favorites() {
   const ids = useAtomValue(favoritesProductIdAtom);
   const { data, isPending, isError } = useQuery({
     queryKey: ["favoritesProduct", ids],
@@ -50,6 +49,4 @@ const Favorites: FC = () => {
       )}
     </div>
   );
-};
-
-export default Favorites;
+}

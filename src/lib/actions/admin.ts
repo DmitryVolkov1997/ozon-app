@@ -37,26 +37,6 @@ export async function createProduct(data: FormData) {
   revalidatePath("/admin");
 }
 
-export async function getAllProducts() {
-  try {
-    return await db.query.product.findMany({
-      with: {
-        reviews: true,
-      },
-    });
-  } catch (e) {
-    console.error("Database error in getAllProducts:", e);
-    throw new Error("Не удалось загрузить список товаров");
-  }
-}
-
-export async function deleteProduct(id: string) {
-  await db.delete(product).where(eq(product.id, id));
-
-  revalidatePath("/admin");
-  // return { success: true };
-}
-
 //=== ОТЗЫВЫ ===
 export async function createReview(data: FormData) {
   const productId = data.get("productId");
@@ -94,17 +74,18 @@ export async function deleteReview(id: string) {
   await db.delete(review).where(eq(review.id, id));
 
   revalidatePath("/admin");
-  // return { success: true };
 }
 
 export async function getAllReviews() {
   return await db.select().from(review);
 }
 
-//test
 export async function getReviewsById(productId: string) {
   return await db.select().from(review).where(eq(review.productId, productId));
 }
 
-// https://www.youtube.com/watch?v=wJt6vHUHTBw&list=PLXkonRjGXZwwrf2ZUY0WTbAXQJ2rbHEOt&index=4
-//FIXME сделать переход на страницу по клику на карточка товара
+//TODO
+// 1) исправь ссылки в header чтобы была активная а также Link взять из next-intl тоже самое в product-item
+// 2) по params сделать запрос и поучить данные товара
+// 3) разбить на хуки product-item
+// 2:36:23

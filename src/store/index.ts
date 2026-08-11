@@ -4,4 +4,3 @@ export const favoritesProductIdAtom = atomWithStorage<string[]>(
   "favoritesProductId",
   [],
 );
- 

@@ -1,7 +1,8 @@
 "use client";
 import { PAGES } from "@/config/pages.config";
+import { useFavorites } from "@/hooks/useFavorites";
+import { Link } from "@/i18n/navigation";
 import { TypeProductWithReviews } from "@/lib/db/types";
-import { favoritesProductIdAtom } from "@/store";
 import { addCurrency } from "@/utils/add-currency";
 import { declensionWord } from "@/utils/declension-word";
 import {
@@ -14,11 +15,10 @@ import {
   useHover,
   useInteractions,
 } from "@floating-ui/react";
-import { useAtom } from "jotai";
 import { Circle, Heart, MessageCircle, Star } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useProductDetails } from "./useProductDetails";
 
 interface ProductItemProps {
   product: TypeProductWithReviews;
@@ -26,9 +26,6 @@ interface ProductItemProps {
 
 export const ProductItem = ({ product }: ProductItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [favoritesProductId, setFavoritesProductId] = useAtom(
-    favoritesProductIdAtom,
-  );
   const [reference, setReference] = useState<HTMLDivElement | null>(null);
   const [floating, setFloating] = useState<HTMLDivElement | null>(null);
   const { floatingStyles, context } = useFloating({
@@ -41,38 +38,10 @@ export const ProductItem = ({ product }: ProductItemProps) => {
       floating,
     },
   });
-
   const hover = useHover(context);
   const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
-
-  const discountPercent = useMemo(() => {
-    if (!product.discountPrice) return null;
-
-    return Math.round(
-      ((product.price - product.discountPrice) / product.price) * 100,
-    );
-  }, [product.price, product.discountPrice]);
-
-  const reviewAverage = useMemo(() => {
-    if (!product.reviews.length) return 0;
-
-    const totalRating = product.reviews.reduce(
-      (acc, review) => acc + review.rating,
-      0,
-    );
-
-    return Math.round(totalRating / product.reviews.length);
-  }, [product.reviews]);
-
-  const isFavorites = favoritesProductId.includes(product.id);
-
-  const toggleFavorites = () => {
-    if (isFavorites) {
-      setFavoritesProductId((ids) => ids.filter((id) => id !== product.id));
-    } else {
-      setFavoritesProductId((ids) => [...ids, product.id]);
-    }
-  };
+  const { discountPercent, reviewAverage } = useProductDetails(product);
+  const { isFavorite, toggleFavorite } = useFavorites(product);
 
   return (
     <div className="relative h-full rounded-2xl bg-white shadow animate-zoom-once">
@@ -89,12 +58,12 @@ export const ProductItem = ({ product }: ProductItemProps) => {
           />
         </Link>
 
-        <button className="absolute top-2 right-2" onClick={toggleFavorites}>
+        <button className="absolute top-2 right-2" onClick={toggleFavorite}>
           <Heart
             className="transition-colors"
             size={25}
-            fill={isFavorites ? "red" : "white"}
-            stroke={isFavorites ? "red" : "black"}
+            fill={isFavorite ? "red" : "white"}
+            stroke={isFavorite ? "red" : "black"}
           />
         </button>
 
