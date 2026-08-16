@@ -1,6 +1,6 @@
 import { ProductItem } from "@/components/elements/product-item/ProductItem";
 import { getAllProducts } from "@/lib/actions/product";
-import { Slider } from "@/pages/home/slider/Slider";
+import Slider from "@/pages/home/slider/Slider";
 import Image from "next/image";
 
 export default async function Home() {

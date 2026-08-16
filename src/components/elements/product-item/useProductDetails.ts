@@ -1,14 +1,12 @@
+import { useProductDiscount } from "@/hooks/useProductDiscount";
 import type { TypeProductWithReviews } from "@/lib/db/types";
 import { useMemo } from "react";
 
 export const useProductDetails = (product: TypeProductWithReviews) => {
-  const discountPercent = useMemo(() => {
-    if (!product.discountPrice) return null;
-
-    return Math.round(
-      ((product.price - product.discountPrice) / product.price) * 100,
-    );
-  }, [product.price, product.discountPrice]);
+  const { discountPercent } = useProductDiscount({
+    price: product.price,
+    discountPrice: product.discountPrice,
+  });
 
   const reviewAverage = useMemo(() => {
     if (!product.reviews.length) return 0;

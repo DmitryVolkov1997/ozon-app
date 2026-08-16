@@ -44,12 +44,12 @@ export const ProductItem = ({ product }: ProductItemProps) => {
   const { isFavorite, toggleFavorite } = useFavorites(product);
 
   return (
-    <div className="relative h-full rounded-2xl bg-white shadow animate-zoom-once">
-      <div className="relative overflow-hidden rounded-2xl">
+    <div className="relative h-full rounded-2xl bg-white shadow animate-zoom-once flex flex-col">
+      <div className="relative overflow-hidden rounded-2xl grow">
         <Link href={PAGES.PRODUCT_DETAILS(product.id)}>
           <Image
             className="w-full object-cover"
-            src={product.imageUrl}
+            src={product.images[0]}
             alt={product.name}
             width={280}
             height={180}
@@ -57,7 +57,6 @@ export const ProductItem = ({ product }: ProductItemProps) => {
             loading="eager"
           />
         </Link>
-
         <button className="absolute top-2 right-2" onClick={toggleFavorite}>
           <Heart
             className="transition-colors"
@@ -66,7 +65,6 @@ export const ProductItem = ({ product }: ProductItemProps) => {
             stroke={isFavorite ? "red" : "black"}
           />
         </button>
-
         {discountPercent && discountPercent >= 50 && (
           <div className="bg-black absolute bottom-2 left-2 flex items-center justify-center gap-x-2 rounded-xl text-white px-2.5 py-1 text-sm font-semibold">
             <Circle size={10} className="fill-pink-600 stroke-pink-600" />

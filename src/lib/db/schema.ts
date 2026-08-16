@@ -1,137 +1,200 @@
-import { relations } from "drizzle-orm";
-import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {relations} from "drizzle-orm";
+import {integer, real, sqliteTable, text} from "drizzle-orm/sqlite-core";
 
 export const user = sqliteTable("users", {
-  id: text("id").primaryKey(),
-  email: text("email").notNull().unique(),
-  emailVerified: integer("email_verified", { mode: "boolean" })
-    .notNull()
-    .default(false),
-  name: text("name"),
-  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
-  ),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
-  ),
+    id: text("id").primaryKey(),
+    email: text("email").notNull().unique(),
+    emailVerified: integer("email_verified", {mode: "boolean"})
+        .notNull()
+        .default(false),
+    name: text("name"),
+    createdAt: integer("created_at", {mode: "timestamp"}).$defaultFn(
+        () => new Date(),
+    ),
+    updatedAt: integer("updated_at", {mode: "timestamp"}).$defaultFn(
+        () => new Date(),
+    ),
 });
 
 export const account = sqliteTable("accounts", {
-  id: text("id").primaryKey(),
-  accountId: text("account_id").notNull(),
-  providerId: text("provider_id").notNull(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  accessToken: text("access_token"),
-  refreshToken: text("refresh_token"),
-  idToken: text("id_token"),
-  accessTokenExpiresAt: integer("access_token_expires_at", {
-    mode: "timestamp",
-  }),
-  refreshTokenExpiresAt: integer("refresh_token_expires_at", {
-    mode: "timestamp",
-  }),
-  scope: text("scope"),
-  password: text("password"),
-  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
-  ),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
-  ),
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, {onDelete: "cascade"}),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: integer("access_token_expires_at", {
+        mode: "timestamp",
+    }),
+    refreshTokenExpiresAt: integer("refresh_token_expires_at", {
+        mode: "timestamp",
+    }),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: integer("created_at", {mode: "timestamp"}).$defaultFn(
+        () => new Date(),
+    ),
+    updatedAt: integer("updated_at", {mode: "timestamp"}).$defaultFn(
+        () => new Date(),
+    ),
 });
 
 export const session = sqliteTable("sessions", {
-  id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  expiresAt: text("expires_at").notNull(),
-  token: text("token").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
-  ),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(
-    () => new Date(),
-  ),
-  userAgent: text("user_agent"),
-  ipAddress: text("ip_address"),
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, {onDelete: "cascade"}),
+    expiresAt: text("expires_at").notNull(),
+    token: text("token").notNull(),
+    createdAt: integer("created_at", {mode: "timestamp"}).$defaultFn(
+        () => new Date(),
+    ),
+    updatedAt: integer("updated_at", {mode: "timestamp"}).$defaultFn(
+        () => new Date(),
+    ),
+    userAgent: text("user_agent"),
+    ipAddress: text("ip_address"),
 });
 
 export const review = sqliteTable("reviews", {
-  id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  productId: text("product_id")
-    .notNull()
-    .references(() => product.id, { onDelete: "cascade" }),
-  rating: real("rating").notNull(),
-  comment: text("comment"),
-  createdAt: integer("created_at", {
-    mode: "timestamp",
-  }).$defaultFn(() => new Date()),
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, {onDelete: "cascade"}),
+    productId: text("product_id")
+        .notNull()
+        .references(() => product.id, {onDelete: "cascade"}),
+    rating: real("rating").notNull(),
+    comment: text("comment"),
+    createdAt: integer("created_at", {
+        mode: "timestamp",
+    }).$defaultFn(() => new Date()),
 });
 
 export const product = sqliteTable("products", {
-  id: text("id").primaryKey(),
+    id: text("id").primaryKey(),
 
-  name: text("name").notNull(),
-  description: text("description"),
-  price: integer("price").notNull(),
-  discountPrice: integer("discount_price"),
-  imageUrl: text("image_url").notNull(),
-  createdAt: integer("created_at", {
-    mode: "timestamp",
-  }).$defaultFn(() => new Date()),
+    name: text("name").notNull(),
+    description: text("description"),
+    price: integer("price").notNull(),
+    discountPrice: integer("discount_price"),
+    images: text("images", {mode: "json"}).$type<string[]>().notNull(),
+    createdAt: integer("created_at", {
+        mode: "timestamp",
+    }).$defaultFn(() => new Date()),
+});
+
+export const cart = sqliteTable("cart", {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .unique()
+        .references(() => user.id, {onDelete: "cascade"}),
+    createdAt: integer("created_at", {
+        mode: "timestamp",
+    }).$defaultFn(() => new Date()),
+});
+
+export const cartItem = sqliteTable("cart_items", {
+    id: text("id").primaryKey(),
+    cartId: text("cart_id")
+        .notNull()
+        .references(() => cart.id, {onDelete: "cascade"}),
+    createdAt: integer("created_at", {
+        mode: "timestamp",
+    }).$defaultFn(() => new Date()),
+    productId: text("product_id")
+        .notNull()
+        .references(() => product.id, {onDelete: "cascade"}),
+    quantity: integer("quantity").notNull().default(1),
 });
 
 export const order = sqliteTable("orders", {
-  id: text("id").primaryKey(),
+    id: text("id").primaryKey(),
 
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  total: integer("total").notNull(),
-  status: text("status").notNull().default("pending"),
-  createdAt: integer("created_at", {
-    mode: "timestamp",
-  }).$defaultFn(() => new Date()),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, {onDelete: "cascade"}),
+    total: integer("total").notNull(),
+    status: text("status").notNull().default("pending"),
+    createdAt: integer("created_at", {
+        mode: "timestamp",
+    }).$defaultFn(() => new Date()),
 });
 
 export const orderItem = sqliteTable("order_items", {
-  id: text("id").primaryKey(),
+    id: text("id").primaryKey(),
 
-  orderId: text("order_id")
-    .notNull()
-    .references(() => order.id, { onDelete: "cascade" }),
-  productId: text("product_id")
-    .notNull()
-    .references(() => product.id, { onDelete: "cascade" }),
-  quantity: integer("quantity").notNull().default(1),
-  price: integer("price").notNull(),
-  createdAt: integer("created_at", {
-    mode: "timestamp",
-  }).$defaultFn(() => new Date()),
+    orderId: text("order_id")
+        .notNull()
+        .references(() => order.id, {onDelete: "cascade"}),
+    productId: text("product_id")
+        .notNull()
+        .references(() => product.id, {onDelete: "cascade"}),
+    quantity: integer("quantity").notNull().default(1),
+    price: integer("price").notNull(),
+    createdAt: integer("created_at", {
+        mode: "timestamp",
+    }).$defaultFn(() => new Date()),
 });
 
-export const productRelation = relations(product, ({ many }) => ({
-  reviews: many(review),
+export const orderRelation = relations(order, ({one, many}) => ({
+    user: one(user, {
+        fields: [order.userId],
+        references: [user.id]
+    }),
+    items: many(orderItem)
+}))
+
+export const orderItemRelation = relations(orderItem, ({one}) => ({
+    order: one(order, {
+        fields: [orderItem.orderId],
+        references: [order.id]
+    }),
+    product: one(product, {
+        fields: [orderItem.productId],
+        references: [product.id]
+    })
+}))
+
+export const productRelation = relations(product, ({many}) => ({
+    reviews: many(review),
 }));
 
-export const reviewRelation = relations(review, ({ one }) => ({
-  product: one(product, {
-    fields: [review.productId],
-    references: [product.id],
-  }),
-  user: one(user, {
-    fields: [review.userId],
-    references: [user.id],
-  }),
+export const reviewRelation = relations(review, ({one}) => ({
+    product: one(product, {
+        fields: [review.productId],
+        references: [product.id],
+    }),
+    user: one(user, {
+        fields: [review.userId],
+        references: [user.id],
+    }),
 }));
 
-export const userRelation = relations(user, ({ many }) => ({
-  reviews: many(review),
-  orders: many(order),
+export const userRelation = relations(user, ({many, one}) => ({
+    reviews: many(review),
+    orders: many(order),
+    cart: one(cart, {
+        fields: [user.id],
+        references: [cart.userId],
+    }),
+}));
+
+export const cartRelations = relations(cart, ({many}) => ({
+    items: many(cartItem),
+}));
+
+export const cartItemRelation = relations(cartItem, ({one}) => ({
+    product: one(product, {
+        fields: [cartItem.productId],
+        references: [product.id],
+    }),
+    cart: one(cart, {
+        fields: [cartItem.cartId],
+        references: [cart.id],
+    }),
 }));

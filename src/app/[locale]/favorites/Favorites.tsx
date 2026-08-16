@@ -8,6 +8,7 @@ import { useAtomValue } from "jotai";
 
 export default function Favorites() {
   const ids = useAtomValue(favoritesProductIdAtom);
+
   const { data, isPending, isError } = useQuery({
     queryKey: ["favoritesProduct", ids],
     queryFn: () => getProductByIds(ids),

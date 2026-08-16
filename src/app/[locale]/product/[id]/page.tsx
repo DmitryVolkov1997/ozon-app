@@ -1,3 +1,4 @@
+import { getCart } from "@/lib/actions/cart";
 import { getProductById } from "@/lib/actions/product";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -19,5 +20,9 @@ export default async function ProductPage({
     notFound();
   }
 
-  return <ProductDetails product={product} />;
+  const cart = await getCart();
+  const quantity =
+    cart.items.find((item) => item.productId === product.id)?.quantity || 0;
+
+  return <ProductDetails product={product} quantity={quantity} />;
 }
