@@ -6,7 +6,6 @@ export const useFavorites = (product: TypeProductWithReviews) => {
   const [favoritesProductId, setFavoritesProductId] = useAtom(
     favoritesProductIdAtom,
   );
-
   const isFavorite = favoritesProductId.includes(product.id);
 
   const toggleFavorite = () => {

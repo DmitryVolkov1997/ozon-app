@@ -11,11 +11,15 @@ export async function createProduct(data: FormData) {
   const discountPrice = data.get("discountPrice")
     ? parseInt(data.get("discountPrice") as string)
     : null;
-  const imageUrl = data.get("imageUrl") as string;
 
   const priceNumber = Number(price);
   const discountPriceNumber =
     discountPrice == null ? null : Number(discountPrice);
+  const images = data
+    .getAll("imageUrl")
+    .filter((value): value is string => typeof value === "string")
+    .map((value) => value.trim())
+    .filter(Boolean);
 
   if (!Number.isInteger(priceNumber)) {
     throw new Error("price должен быть целым числом");
@@ -31,7 +35,7 @@ export async function createProduct(data: FormData) {
     description: description || null,
     price: priceNumber,
     discountPrice: discountPriceNumber,
-    imageUrl,
+    images,
   });
 
   revalidatePath("/admin");
@@ -85,7 +89,8 @@ export async function getReviewsById(productId: string) {
 }
 
 //TODO
-// 1) исправь ссылки в header чтобы была активная а также Link взять из next-intl тоже самое в product-item
-// 2) по params сделать запрос и поучить данные товара
-// 3) разбить на хуки product-item
-// 2:36:23
+// 1) сделать Breadcrumbs
+// 2) сделать slider carousel
+// 3) Разбить на ProductDetailsGallery
+// 4) Разбить на ProductInformation
+// 5) Изменить schema

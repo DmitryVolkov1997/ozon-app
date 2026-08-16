@@ -81,7 +81,7 @@ export const product = sqliteTable("products", {
   description: text("description"),
   price: integer("price").notNull(),
   discountPrice: integer("discount_price"),
-  imageUrl: text("image_url").notNull(),
+  images: text("images", { mode: "json" }).$type<string[]>().notNull(),
   createdAt: integer("created_at", {
     mode: "timestamp",
   }).$defaultFn(() => new Date()),

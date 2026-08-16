@@ -1,7 +1,7 @@
 import { deleteProduct, getAllProducts } from "@/lib/actions/product";
 import { addCurrency } from "@/utils/add-currency";
-import { Trash2 } from "lucide-react";
 import Image from "next/image";
+import DeleteProductButton from "./DeleteProductButton";
 
 export async function ProductList() {
   const products = (await getAllProducts()) || [];
@@ -22,10 +22,11 @@ export async function ProductList() {
               key={product.id}
             >
               <Image
-                src={product.imageUrl}
+                src={product.images[0]}
                 alt={product.name}
                 width={100}
                 height={100}
+                className="object-contain"
               />
 
               <div className="flex flex-col">
@@ -35,14 +36,10 @@ export async function ProductList() {
                 </span>
               </div>
 
-              <form action={deleteProductWithId}>
-                <button className="bg-transparent" type="submit">
-                  <Trash2
-                    className="text-red-700 hover:text-red-900 transition-colors"
-                    size={20}
-                  />
-                </button>
-              </form>
+              <DeleteProductButton
+                action={deleteProductWithId}
+                productId={product.id}
+              />
             </div>
           );
         })

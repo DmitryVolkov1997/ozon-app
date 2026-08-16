@@ -132,11 +132,13 @@ export const Header = () => {
                 >
                   <el.icon size={21} />
                   <span className="font-medium">{el.title}</span>
-                  {favorites.length > 0 && el.title === "Избранное" && (
-                    <span className="absolute right-1 -top-2 inline-flex h-6 min-w-6 items-center justify-center whitespace-nowrap rounded-full bg-pink-800 px-1.5 text-xs leading-none text-white">
-                      {favorites.length}
-                    </span>
-                  )}
+                  {favorites &&
+                    favorites.length > 0 &&
+                    el.title === "Избранное" && (
+                      <span className="absolute right-1 -top-2 inline-flex h-6 min-w-6 items-center justify-center whitespace-nowrap rounded-full bg-pink-800 px-1.5 text-xs leading-none text-white">
+                        {favorites.length}
+                      </span>
+                    )}
                 </Link>
               );
             })}
