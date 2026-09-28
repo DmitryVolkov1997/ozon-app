@@ -2,24 +2,24 @@ import createMiddleware from 'next-intl/middleware'
 import { NextResponse, type NextRequest } from 'next/server'
 import { PAGES } from './config/pages.config'
 import { routing } from './i18n/routing'
-import { getUser } from './lib/actions/user'
 
 const intlMiddleware = createMiddleware(routing)
 const protectedRoutes = ['/orders', '/cart']
 
-export default async function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 
 	const isProtectedRoute = protectedRoutes.some(
 		route => pathname.startsWith(route) || pathname.includes(route)
 	)
 
-	if (isProtectedRoute) {
-		const user = await getUser()
+	const hasSessionCookie = Boolean(
+		request.cookies.get('better-auth.session_token')?.value ||
+		request.cookies.get('__Secure-better-auth.session_token')?.value,
+	)
 
-		if (!user) {
-			return NextResponse.redirect(new URL(PAGES.HOME, request.url))
-		}
+	if (isProtectedRoute && !hasSessionCookie) {
+		return NextResponse.redirect(new URL(PAGES.HOME, request.url))
 	}
 
 	return intlMiddleware(request)
